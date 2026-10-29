@@ -1,0 +1,16 @@
+PROJECT: Enterprise Customer Portal Development (ECP-2026-01)
+MEETING: Sprint Progress Sync #1
+DATE: 20 October 2026, 10:00 AM IST
+ATTENDEES: Girish kumar (PM), Ravi Kumar (Backend), Neha Shah (Frontend), Priya Nair (QA), Arjun Mehta (DevOps)
+NOTE: Fictional transcript prepared for MUJ-Deloitte capstone demonstration.
+
+Girish kumar: Let's review progress against the project plan. Requirements and wireframes were signed off on 16 October.
+Neha: The React login screen and dashboard layout are ready. Dashboard API integration is still pending. I expect to complete the UI milestone by 27 October if the authentication API arrives on time.
+Ravi: The login API coding is approximately 80 percent complete. I need to finish token validation and error handling. I am targeting the planned 23 October date.
+Priya: I have drafted functional test cases. I need a stable login API and staging environment before I can begin end-to-end testing.
+Arjun: I will confirm the staging environment readiness by 22 October.
+Girish kumar: Action for Ravi: finish the login API, including token validation, by 23 October. Action for Arjun: confirm staging readiness by 22 October. Priya, finalize the login test cases by 24 October.
+Priya: One risk is that any login API delay could reduce the testing window before the 30 October QA milestone.
+Girish kumar: Agreed. We will review the API status in the next sync. No change to the baseline dates is approved today.
+
+END OF TRANSCRIPT

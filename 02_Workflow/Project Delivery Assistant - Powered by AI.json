@@ -1,0 +1,529 @@
+{
+  "name": "Project Delivery Assistant - Powered by AI",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Project Delivery Assistant",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Project Plan",
+              "fieldType": "file"
+            },
+            {
+              "fieldLabel": "Meeting Transcript",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -720,
+        -528
+      ],
+      "id": "75bb2fa0-ea1d-4f9d-9e9d-e682877ab277",
+      "name": "On form submission",
+      "webhookId": "ebe4f3a0-dba4-438a-9018-7dcef01a4c64"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Project_Plan",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        -400
+      ],
+      "id": "98ac8bed-718a-4a86-9458-a73c9a88ac7d",
+      "name": "Extract Project Plan"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50fe2fa8-babd-4ee1-80a7-0e9012c6fade",
+              "name": "project_plan_text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -368,
+        -400
+      ],
+      "id": "2f3614c2-3469-4fbe-841f-8f4eaf909fe6",
+      "name": "Prepare Project Plan"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "Meeting_Transcript",
+        "destinationKey": "meeting_text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        -608
+      ],
+      "id": "3eac4dbc-6f17-4222-8e04-23bad4a7bebf",
+      "name": "Extract Meeting Transcript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4cfbf2a7-0c1a-44ea-96cf-4a30d5094e53",
+              "name": "meeting_text",
+              "value": "={{ $json.meeting_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -368,
+        -608
+      ],
+      "id": "dc2d30cf-eae5-4fcf-9a96-90badd33ac57",
+      "name": "Prepare Meeting Transcript"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -192,
+        -512
+      ],
+      "id": "5f3944a2-5488-42ab-8b7b-e08f0960d5ec",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview",
+          "cachedResultName": "Gemini 3 Flash Preview",
+          "cachedResultUrl": ""
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\n{{ `You are an AI Project Delivery Assistant for software projects.\n\nAnalyze the project plan and meeting transcript.\n\nGenerate these four sections:\n\n1. MEETING SUMMARY (MoM)\n- Meeting date\n- Key discussions\n- Decisions made\n\n2. ACTION ITEMS\n- Task\n- Owner\n- Due date\n- Status\n\n3. RISKS AND BLOCKERS\n- Risk description\n- Business/project impact\n- Suggested mitigation\n\n4. PROJECT STATUS REPORT\n- Completed tasks\n- Pending tasks\n- Milestone progress\n- Overall status: On Track / At Risk / Delayed\n\nCompare the meeting updates against the project plan.\n\nRules:\n- Do not invent missing information.\n- Highlight any mismatch between the plan and meeting.\n- Flag uncertain dates or owners.\n- Mention items requiring Project Manager approval.\n- Use clear headings and concise tables.\n\nPROJECT PLAN:\n${$json.project_plan_text}\n\nMEETING TRANSCRIPT:\n${$json.meeting_text}` }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -512
+      ],
+      "id": "2ca2ad84-ac95-423d-b9e7-a57b1d958c2d",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6oqJTaZQcdA79zrY",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28e377dc-7855-4cb6-bad1-af0ef5fad2ba",
+              "name": "ai_report",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        256,
+        -512
+      ],
+      "id": "0496fb1f-52c7-4468-9ff1-57c3d9cdca61",
+      "name": "Prepare AI Report"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldType": "html",
+              "html": "{{ $json.html_report }}"
+            },
+            {
+              "fieldLabel": "Reviewer Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Approval Decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approved"
+                  },
+                  {
+                    "option": "Needs Changes"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Reviewer Comments",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        624,
+        -512
+      ],
+      "id": "880e1ffe-3b2b-419c-bf94-8c8214a918f3",
+      "name": "Project Manager Review",
+      "webhookId": "a99b07a0-fcb9-4b41-ac1f-18d030a9b21d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3238c229-dd2f-4e62-92b3-79d762e65d0b",
+              "name": "reviewer_name",
+              "value": "={{ $json['Reviewer Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ce512ef8-5e6b-45a3-8d63-397042d7ae96",
+              "name": "approval_status",
+              "value": "={{ $json['Approval Decision'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3f4a6df0-1b24-42ab-9aec-e59b5a8713e8",
+              "name": "reviewer_comments",
+              "value": "={{ $json['Reviewer Comments'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2acde332-599c-4013-af3b-75705848ad04",
+              "name": "ai_report",
+              "value": "={{ $(\"Prepare AI Report\").first().json.ai_report }}",
+              "type": "string"
+            },
+            {
+              "id": "2cb86cf8-3c47-4128-b71d-1b9758aef3a0",
+              "name": "final_report",
+              "value": "=\n{{ `# Project Delivery Assistant – Powered by AI\n\n## Project Manager Review\n\n**Reviewer:** ${$json[\"Reviewer Name\"]}\n**Decision:** ${$json[\"Approval Decision\"]}\n**Comments:** ${$json[\"Reviewer Comments\"] || \"None\"}\n\n**Report Classification:** ${$json[\"Approval Decision\"] === \"Approved\" ? \"Approved Report\" : \"Draft – Needs Changes\"}\n\n---\n\n${$(\"Prepare AI Report\").first().json.ai_report}` }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        816,
+        -512
+      ],
+      "id": "2d5456a4-37e7-41b0-96c3-03d434896395",
+      "name": "Prepare Final Report"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "final_report",
+        "options": {
+          "fileName": "Project_Status_Report.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        -704
+      ],
+      "id": "df7defe4-6c31-45b3-92ff-1dc3e11f6fca",
+      "name": "Generate Markdown Report1"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "fileName": "Project_Review_Result.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        -320
+      ],
+      "id": "6ece7535-172e-4526-90f0-dc0362eb63f4",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.final_report }}",
+        "destinationKey": "html_report",
+        "options": {
+          "completeHTMLDocument": true,
+          "tables": true
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -512
+      ],
+      "id": "577c096b-681e-4f3b-b864-cbf02bfdfbe2",
+      "name": "Convert Final Report to HTML"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html_report",
+        "binaryPropertyName": "=data",
+        "options": {
+          "fileName": "Project_Status_Report.html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.2,
+      "position": [
+        1216,
+        -512
+      ],
+      "id": "5a81b05e-cd13-4302-8b78-ecc4144c1b19",
+      "name": "Generate HTML Report"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.ai_report }}",
+        "destinationKey": "html_report",
+        "options": {
+          "completeHTMLDocument": false,
+          "tables": true
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -512
+      ],
+      "id": "9b512e06-3d85-4c88-a8a5-2174663a7949",
+      "name": "Convert Markdown to HTML"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract Meeting Transcript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Project Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Project Plan": {
+      "main": [
+        [
+          {
+            "node": "Prepare Project Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Meeting Transcript": {
+      "main": [
+        [
+          {
+            "node": "Prepare Meeting Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Project Plan": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Prepare Meeting Transcript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Report": {
+      "main": [
+        [
+          {
+            "node": "Convert Markdown to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Manager Review": {
+      "main": [
+        [
+          {
+            "node": "Prepare Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Final Report": {
+      "main": [
+        [
+          {
+            "node": "Generate Markdown Report1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert Final Report to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        []
+      ]
+    },
+    "Convert Final Report to HTML": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Markdown to HTML": {
+      "main": [
+        [
+          {
+            "node": "Project Manager Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "96411a2f-83bf-4c52-b45a-c03eade6a709",
+  "meta": {
+    "instanceId": "aebd988dbfbc4fe54424337d609a3a8b9b8448fbf1c860247377643de4700c68"
+  },
+  "nodeGroups": [],
+  "id": "nXsPudUPuDtmlgt2",
+  "tags": []
+}

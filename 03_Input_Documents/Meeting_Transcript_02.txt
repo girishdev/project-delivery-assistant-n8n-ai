@@ -1,0 +1,17 @@
+PROJECT: Enterprise Customer Portal Development (ECP-2026-01)
+MEETING: Sprint Progress Sync #2
+DATE: 26 October 2026, 11:00 AM IST
+ATTENDEES: Girish kumar (PM), Ravi Kumar (Backend), Neha Shah (Frontend), Priya Nair (QA), Arjun Mehta (DevOps)
+NOTE: Fictional transcript prepared for MUJ-Deloitte capstone demonstration.
+
+Girish kumar: We need an update on the milestone due dates. Ravi, did the login API meet the 23 October baseline?
+Ravi: No. Token validation failed during integration and the login API missed its 23 October deadline. The fix is in progress. My new working target is 29 October, but this date is not yet approved as a revised baseline.
+Neha: The dashboard UI screens are complete, but integration is blocked until the login API works. The 27 October UI milestone may be at risk.
+Priya: QA testing was expected to finish by 30 October. With the API delay, I estimate integration testing will require at least three more working days once the API is ready. I cannot confirm the original QA milestone.
+Arjun: Staging was ready on 22 October, as agreed. I can deploy the updated API within one working day of receiving the tested build.
+Girish kumar: Please record these actions: Ravi to deliver a tested login API build by 29 October; Arjun to deploy it within one working day after receipt; Priya to provide a revised QA schedule by 30 October; Neha to integrate the dashboard once the API is available. Neha, please confirm your integration completion date after the build arrives.
+Ravi: I also need one hour from Priya for token-validation test scenarios tomorrow, 27 October.
+Priya: Accepted. I will share those test scenarios on 27 October.
+Girish kumar: The login API delay is a delivery risk and could affect our 6 November internal demo. I will assess a revised plan and seek approval if required. Until then, the original project plan remains our approved baseline. Do not report an unapproved schedule as confirmed.
+
+END OF TRANSCRIPT
